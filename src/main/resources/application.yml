@@ -1,0 +1,7 @@
+
+
+logging:
+  level:
+    root: DEBUG
+server:
+  port: 8081

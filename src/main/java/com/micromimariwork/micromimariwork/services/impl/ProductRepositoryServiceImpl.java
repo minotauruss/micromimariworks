@@ -13,39 +13,42 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ProductRepositoryImpl  implements IProductRepositoryService {
+public class ProductRepositoryServiceImpl implements IProductRepositoryService {
     private  final ProductRepository productRepository;
 
 
     @Override
     public Product createProduct(Language language, ProductCreateRequest productCreateRequest) {
         log.debug("[{}][createProduct] -> request {}", this.getClass().getSimpleName(), productCreateRequest);
-
 try {
-
     Product product = Product.builder()
             .productName(productCreateRequest.getProductName())
             .quantity(productCreateRequest.getQuantity())
             .price(productCreateRequest.getPrice())
             .deleted(false)
             .build();
-
     Product productResponse = productRepository.save(product);
     log.debug("[{}][createProduct] -> request {}", this.getClass().getSimpleName(),productResponse );
+    return product;
 }catch (Exception e) {
     throw new ProductNotCreateException(language, FriendlyMessageCodes.PRODUCT_NOT_CREATED_EXCEPTION, "product request : " + productCreateRequest.toString());
-
 }
-        return null;
     }
 
     @Override
     public Product getProduct(Language language, Long productId) {
-        return null;
+        log.debug("[{}][getProduct] -> request {}", this.getClass().getSimpleName(), productId);
+        Product product = productRepository.getByProductIdAndDeletedFalse(productId);
+        if(Objects.isNull(product)){
+            throw new ProductNotCreateException(language, FriendlyMessageCodes.PRODUCT_NOT_FOUND_EXCEPTION, "product  : " + productId);
+        }
+        return product;
     }
 
     @Override
