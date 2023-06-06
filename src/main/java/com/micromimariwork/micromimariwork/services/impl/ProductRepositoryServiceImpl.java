@@ -53,17 +53,39 @@ try {
 
     @Override
     public List<Product> getProducts(Language language) {
-        return null;
+        log.debug("[{}][getProduct] ", this.getClass().getSimpleName());
+        List<Product> products = productRepository.getAllByDeletedFalse();
+        if(products.isEmpty()){
+            throw new ProductNotCreateException(language, FriendlyMessageCodes.PRODUCT_NOT_FOUND_EXCEPTION, "product");
+        }
+        return products;
     }
 
     @Override
-    public Product updateProduct(Language language, Long productId, ProductUpdateRequest productUpdateRequest) {
-        return null;
+    public Product updateProduct(Language language, ProductUpdateRequest productUpdateRequest) {
+        log.debug("[{}][createProduct] -> request {}", this.getClass().getSimpleName(), productUpdateRequest);
+        Product product = productRepository.getByProductIdAndDeletedFalse(productUpdateRequest.getProductId());
+        if(Objects.isNull(product)){
+            throw new ProductNotCreateException(language, FriendlyMessageCodes.PRODUCT_NOT_FOUND_EXCEPTION, "product  : " + productUpdateRequest);
+        }
+        product.setProductName(productUpdateRequest.getProductName());
+        product.setPrice(productUpdateRequest.getPrice());
+        product.setQuantity(productUpdateRequest.getQuantity());
+        product.setProductUpdateDate(productUpdateRequest.getProductUpdateDate());
+        productRepository.save(product);
+        return product;
     }
 
     @Override
     public Product deleteProduct(Language language, Long productId) {
-        return null;
+        log.debug("[{}][createProduct] -> request {}", this.getClass().getSimpleName(), productId);
+        Product product = productRepository.getByProductIdAndDeletedFalse(productId);
+        if(Objects.isNull(product)){
+            throw new ProductNotCreateException(language, FriendlyMessageCodes.PRODUCT_NOT_FOUND_EXCEPTION, "product  : " + productId);
+        }
+        product.setDeleted(true);
+        productRepository.save(product);
+        return product;
     }
 
 

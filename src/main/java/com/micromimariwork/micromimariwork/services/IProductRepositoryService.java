@@ -14,7 +14,7 @@ public interface IProductRepositoryService {
 
     List<Product> getProducts(Language language);
 
-    Product updateProduct(Language language,Long productId, ProductUpdateRequest productUpdateRequest);
+    Product updateProduct(Language language, ProductUpdateRequest productUpdateRequest);
 
     Product deleteProduct (Language language, Long productId);
 
